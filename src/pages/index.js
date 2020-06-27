@@ -24,7 +24,7 @@ const ContenrWrapper = styled.header`
     margin: 5rem 0 2.5rem 0;
     font-size: 1.8rem;
     line-height: 1.6;
-    max-width: 32ch;
+    max-width: 30ch;
   }
 `
 
@@ -40,33 +40,31 @@ const ImageWrapper = styled(Img)`
 
 const IndexPage = ({
   data: {
-    file: {
-      childImageSharp: { fluid },
-    },
+    datoCmsHomePage: { title, paragraph, heroImage },
   },
 }) => (
   <>
     <ContenrWrapper>
       <ContenrWrapper>
-        <h1>Your new space</h1>
-        <p>
-          While artists work from real to the abstract, architects must work
-          from abstract to the real.
-        </p>
+        <h1>{title}</h1>
+        <p>{paragraph}</p>
         <Button>estimate project</Button>
       </ContenrWrapper>
     </ContenrWrapper>
-    <ImageWrapper fluid={fluid} alt="hero graphic" />
+    <ImageWrapper {...heroImage} />
   </>
 )
 
 export default IndexPage
 export const query = graphql`
-  {
-    file(name: { eq: "hero" }) {
-      childImageSharp {
-        fluid(maxWidth: 800, quality: 90) {
-          ...GatsbyImageSharpFluid_tracedSVG
+  query datoCmsHomePageQuery {
+    datoCmsHomePage {
+      title
+      paragraph
+      heroImage {
+        alt
+        fluid(maxWidth: 400) {
+          ...GatsbyDatoCmsFluid_tracedSVG
         }
       }
     }

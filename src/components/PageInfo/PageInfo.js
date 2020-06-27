@@ -3,11 +3,9 @@ import styled from "styled-components"
 
 const Header = styled.header`
   max-width: 32ch;
+  margin-bottom: 6rem;
   h1 {
     margin-top: 0;
-  }
-  p {
-    margin-bottom: 6rem;
   }
 `
 

@@ -1,49 +1,68 @@
 import React from "react"
-import styled from "styled-components"
 import { graphql } from "gatsby"
 import Img from "gatsby-image"
-import { MDXRenderer } from "gatsby-plugin-mdx"
+import { renderModularContent } from "../helpers/renderModularContent"
 
 function PostLayout({
   data: {
-    allMdx: { articles },
+    datoCmsArticle: { title, author, featuredImage, articleContent },
   },
 }) {
-  const {
-    body,
-    frontmatter: { title, author, created, featuredImage },
-  } = articles[0]
   return (
     <article>
       <header>
         <h1>{title}</h1>
         <p>{author}</p>
       </header>
-      <Img fixed={featuredImage.childImageSharp.fixed} alt="title" />
-      <MDXRenderer>{body}</MDXRenderer>
+      <Img {...featuredImage} />
+      <section>
+        {articleContent.map(item => renderModularContent(item))}
+      </section>
     </article>
   )
 }
 
 export default PostLayout
 export const query = graphql`
-  query postQuery($title: String!) {
-    allMdx(filter: { frontmatter: { title: { eq: $title } } }) {
-      articles: nodes {
-        frontmatter {
-          title
-          slug
-          author
-          created
-          featuredImage {
-            childImageSharp {
-              fixed(width: 400, quality: 80) {
-                ...GatsbyImageSharpFixed_tracedSVG
-              }
-            }
+  query DatoCmsSinglePostQuery($id: String!) {
+    datoCmsArticle(id: { eq: $id }) {
+      title
+      author
+      featuredImage {
+        alt
+        title
+        fixed(width: 500) {
+          ...GatsbyDatoCmsFixed_tracedSVG
+        }
+      }
+      articleContent {
+        ... on DatoCmsHeading {
+          headingContent
+          id
+          model {
+            apiKey
           }
         }
-        body
+        ... on DatoCmsParagraph {
+          paragraphContent
+          id
+          model {
+            apiKey
+          }
+        }
+        ... on DatoCmsArticleImage {
+          imageData {
+            alt
+            title
+            fixed(width: 500) {
+              ...GatsbyDatoCmsFixed_tracedSVG
+            }
+          }
+          id
+          model {
+            apiKey
+          }
+        }
       }
     }
   }

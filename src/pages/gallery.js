@@ -2,13 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import { graphql } from "gatsby"
 import Img from "gatsby-image"
-
-const Header = styled.header`
-  max-width: 32ch;
-  h1 {
-    margin-top: 0;
-  }
-`
+import PageInfo from "../components/PageInfo/PageInfo"
 
 const GalleryWrapper = styled.section`
   display: grid;
@@ -19,20 +13,14 @@ const GalleryWrapper = styled.section`
 
 const GalleryPage = ({
   data: {
-    allFile: { nodes: images },
+    datoCmsGallery: { title, paragraph, images },
   },
 }) => (
   <>
-    <Header>
-      <h1>Gallery</h1>
-      <p>
-        While artists work from real to the abstract, architects must work from
-        the abstract to the real.
-      </p>
-    </Header>
+    <PageInfo title={title} paragraph={paragraph} />
     <GalleryWrapper>
-      {images.map(({ childImageSharp: { fluid } }) => (
-        <Img key={fluid.src} fluid={fluid} />
+      {images.map(imageData => (
+        <Img {...imageData} />
       ))}
     </GalleryWrapper>
   </>
@@ -41,13 +29,15 @@ const GalleryPage = ({
 export default GalleryPage
 
 export const query = graphql`
-  {
-    allFile(filter: { absolutePath: { regex: "/gallery/" } }) {
-      nodes {
-        childImageSharp {
-          fluid(maxWidth: 400, quality: 80) {
-            ...GatsbyImageSharpFluid_tracedSVG
-          }
+  query datoCmsGalleryQuery {
+    datoCmsGallery {
+      title
+      paragraph
+      images {
+        alt
+        key: originalId
+        fluid(maxWidth: 400) {
+          ...GatsbyDatoCmsFluid_tracedSVG
         }
       }
     }

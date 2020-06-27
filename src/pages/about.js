@@ -3,6 +3,7 @@ import styled from "styled-components"
 import Img from "gatsby-image"
 import { graphql } from "gatsby"
 import PageInfo from "../components/PageInfo/PageInfo"
+import { renderModularContent } from "../helpers/renderModularContent"
 
 const ContentWrapper = styled.section`
   width: 45%;
@@ -33,46 +34,49 @@ const AboutInfo = styled.div`
 
 const AboutPage = ({
   data: {
-    file: {
-      childImageSharp: { fluid },
-    },
+    datoCmsAbout: { title, paragraph, aboutContent, featuredImage },
   },
-}) => (
-  <>
-    <ContentWrapper>
-      <PageInfo
-        title="about"
-        paragraph="While artists work from real to the abstract, architects must work from the abstract to the real. "
-      />
-      <AboutInfo>
-        <hr />
-        <p>
-          Architectural design is primarily driven by the holistically creative
-          manipulation of mass, space, volume, texture, light, shadow,
-          materials, program, and Realistic elements such as cost, construction
-          and technology, in order to achieve an end which is aesthetic,
-          functional and often artistic. This distinguishes Architecture from
-          engineering design, which is usually driven primarily by the creative
-          application of mathematical and scientific principles.
-        </p>
-        <p>
-          <strong>Abigail Donutdough</strong>
-        </p>
-        <hr />
-      </AboutInfo>
-    </ContentWrapper>
-    <ImageWrapper fluid={fluid} alt="Abigail Donutdough photo" />
-  </>
-)
+}) =>
+  console.log(aboutContent) || (
+    <>
+      <ContentWrapper>
+        <PageInfo title={title} paragraph={paragraph} />
+        <AboutInfo>
+          <hr />
+          {aboutContent.map(item => renderModularContent(item))}
+          <hr />
+        </AboutInfo>
+      </ContentWrapper>
+      <ImageWrapper {...featuredImage} />
+    </>
+  )
 
 export default AboutPage
 
 export const query = graphql`
-  {
-    file(name: { eq: "about" }) {
-      childImageSharp {
-        fluid(maxWidth: 800, quality: 90, traceSVG: { background: "#fff" }) {
-          ...GatsbyImageSharpFluid_tracedSVG
+  query datoCmsAboutQuery {
+    datoCmsAbout {
+      title
+      paragraph
+      featuredImage {
+        fluid(maxWidth: 800) {
+          ...GatsbyDatoCmsFluid_tracedSVG
+        }
+      }
+      aboutContent {
+        ... on DatoCmsParagraph {
+          paragraphContent
+          id
+          model {
+            apiKey
+          }
+        }
+        ... on DatoCmsAuthor {
+          authorContent
+          id
+          model {
+            apiKey
+          }
         }
       }
     }

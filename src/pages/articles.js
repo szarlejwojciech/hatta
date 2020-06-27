@@ -3,6 +3,7 @@ import { graphql } from "gatsby"
 import styled from "styled-components"
 import PageInfo from "../components/PageInfo/PageInfo"
 import ArticlePreview from "../components/ArticlePreview/ArticlePreview"
+import slugify from "slugify"
 
 const StyledWrapper = styled.section`
   display: grid;
@@ -13,7 +14,7 @@ const StyledWrapper = styled.section`
 
 const ArticlesPage = ({
   data: {
-    allMdx: { articles },
+    allDatoCmsArticle: { articles },
   },
 }) => (
   <>
@@ -24,17 +25,11 @@ const ArticlesPage = ({
       }
     />
     <StyledWrapper>
-      {articles.map(
-        ({ excerpt, frontmatter: { slug, title, featuredImage } }) => (
-          <ArticlePreview
-            key={slug}
-            excerpt={excerpt}
-            title={title}
-            fluid={featuredImage.childImageSharp.fluid}
-            slug={slug}
-          />
-        )
-      )}
+      {articles.map(({ /* excerpt, */ title, featuredImage }) => {
+        const slug = slugify(title, { lower: true })
+        const previewData = { ...featuredImage, slug, title, key: slug }
+        return <ArticlePreview {...previewData} />
+      })}
     </StyledWrapper>
   </>
 )
@@ -42,20 +37,13 @@ const ArticlesPage = ({
 export default ArticlesPage
 
 export const query = graphql`
-  {
-    allMdx {
+  query DatoCmsAllArticleQuery {
+    allDatoCmsArticle {
       articles: nodes {
-        excerpt(pruneLength: 50)
-        frontmatter {
-          title
-          slug
-          created
-          featuredImage {
-            childImageSharp {
-              fluid(maxWidth: 400, quality: 80) {
-                ...GatsbyImageSharpFluid_tracedSVG
-              }
-            }
+        title
+        featuredImage {
+          fluid(maxWidth: 400) {
+            ...GatsbyDatoCmsFluid_tracedSVG
           }
         }
       }
