@@ -36,20 +36,19 @@ const AboutPage = ({
   data: {
     datoCmsAbout: { title, paragraph, aboutContent, featuredImage },
   },
-}) =>
-  console.log(aboutContent) || (
-    <>
-      <ContentWrapper>
-        <PageInfo title={title} paragraph={paragraph} />
-        <AboutInfo>
-          <hr />
-          {aboutContent.map(item => renderModularContent(item))}
-          <hr />
-        </AboutInfo>
-      </ContentWrapper>
-      <ImageWrapper {...featuredImage} />
-    </>
-  )
+}) => (
+  <>
+    <ContentWrapper>
+      <PageInfo title={title} paragraph={paragraph} />
+      <AboutInfo>
+        <hr />
+        {aboutContent.map(item => renderModularContent(item))}
+        <hr />
+      </AboutInfo>
+    </ContentWrapper>
+    <ImageWrapper {...featuredImage} />
+  </>
+)
 
 export default AboutPage
 
@@ -59,7 +58,7 @@ export const query = graphql`
       title
       paragraph
       featuredImage {
-        fluid(maxWidth: 800) {
+        fluid(maxWidth: 800, imgixParams: { q: 90 }) {
           ...GatsbyDatoCmsFluid_tracedSVG
         }
       }

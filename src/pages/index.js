@@ -63,7 +63,7 @@ export const query = graphql`
       paragraph
       heroImage {
         alt
-        fluid(maxWidth: 400) {
+        fluid(maxWidth: 400, imgixParams: { q: 90 }) {
           ...GatsbyDatoCmsFluid_tracedSVG
         }
       }
